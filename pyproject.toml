@@ -1,0 +1,94 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jupyterhub-fastapi-adapter"
+dynamic = ["version"]
+description = 'Adapter for jupyterhub services using fastapi, providing HubOAuth'
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [
+  { name = "Tim Metzler", email = "tim.metzler@h-brs.de" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "fastapi>=0.115",
+  "httpx>=0.24",
+  "jupyterhub>=4.0",
+  "pydantic>=2.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/Digiklausur/jupyterhub-fastapi-adapter#readme"
+Issues = "https://github.com/Digiklausur/jupyterhub-fastapi-adapter/issues"
+Source = "https://github.com/Digiklausur/jupyterhub-fastapi-adapter"
+
+[project.optional-dependencies]
+dev = [
+  "pre-commit",
+  "ruff",
+  "tbump",
+  "build",
+  "twine",
+]
+test = [
+  "pytest",
+  "pytest-cov",
+  "pytest-asyncio",
+]
+docs = [
+  "sphinx",
+  "pydata-sphinx-theme",
+]
+
+[tool.hatch.version]
+path = "jupyterhub_fastapi_adapter/__about__.py"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.tbump]
+github_url = "https://github.com/Digiklausur/jupyterhub-fastapi-adapter"
+
+[tool.tbump.version]
+current = "0.1.0"
+regex = '''
+  (?P<major>\d+)
+  \.
+  (?P<minor>\d+)
+  \.
+  (?P<patch>\d+)
+  (?P<rc>rc\d+)?
+  '''
+
+[tool.tbump.git]
+message_template = "Bump to {new_version}"
+tag_template = "v{new_version}"
+
+# Files with the version to update
+[[tool.tbump.file]]
+src = "jupyterhub_fastapi_adapter/__about__.py"
+
+[[tool.tbump.before_commit]]
+name = "Build"
+cmd = "python -m build"
+
+[[tool.tbump.before_commit]]
+name = "Check with twine"
+cmd = "twine check dist/*"
+
+[tool.ruff]
+line-length = 100
+lint.select = ["F", "E", "I"]
