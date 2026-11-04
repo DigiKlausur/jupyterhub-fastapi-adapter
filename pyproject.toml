@@ -37,7 +37,8 @@ Source = "https://github.com/Digiklausur/jupyterhub-fastapi-adapter"
 [project.optional-dependencies]
 dev = [
   "pre-commit",
-  "ruff",
+  # CI's ruff-action reads this pin, so there is no second copy to update.
+  "ruff==0.16.7",
   "tbump",
   "build",
   "twine",
