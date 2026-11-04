@@ -63,13 +63,15 @@ github_url = "https://github.com/Digiklausur/jupyterhub-fastapi-adapter"
 
 [tool.tbump.version]
 current = "0.1.0"
+# Release candidates are written "0.2.0-rc0", as in the other e2x packages;
+# Python packaging normalises it to "0.2.0rc0".
 regex = '''
   (?P<major>\d+)
   \.
   (?P<minor>\d+)
   \.
   (?P<patch>\d+)
-  (?P<rc>rc\d+)?
+  (-(?P<rc>rc\d+))?
   '''
 
 [tool.tbump.git]
