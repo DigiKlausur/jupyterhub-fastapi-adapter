@@ -77,8 +77,11 @@ async def authentication_required_handler(request: Request, exc: AuthenticationR
             status_code=500,
         )
 
-    # For browser requests, redirect to OAuth login
-    state = str(request.url)
+    # For browser requests, redirect to OAuth login.
+    # Keep only path and query, so the scheme/host seen behind the proxy is never reused.
+    state = request.url.path
+    if request.url.query:
+        state += "?" + request.url.query
     authorize_url = (
         hub_auth.oauth_authorization_url
         + "?"
@@ -113,7 +116,11 @@ async def oauth_callback(request: Request, code: str = "", state: str = ""):
     token_data = resp.json()
     token = token_data["access_token"]
 
-    next_url = state or JUPYTERHUB_SERVICE_PREFIX
+    # Only redirect back into this service (prevents open redirects via state)
+    if state.startswith(JUPYTERHUB_SERVICE_PREFIX):
+        next_url = state
+    else:
+        next_url = JUPYTERHUB_SERVICE_PREFIX
     response = RedirectResponse(url=next_url)
     response.set_cookie(
         key=hub_auth.cookie_name,
