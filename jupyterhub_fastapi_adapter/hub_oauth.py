@@ -47,6 +47,12 @@ def get_token_from_request(request: Request) -> str | None:
     return None
 
 
+def _is_https(request: Request) -> bool:
+    """Whether the browser used HTTPS, also when behind JupyterHub's proxy."""
+    proto = request.headers.get("X-Forwarded-Proto", request.url.scheme)
+    return proto.split(",")[0].strip().lower() == "https"
+
+
 async def authentication_required_handler(request: Request, exc: AuthenticationRequired):
     """Handle authentication required by redirecting to OAuth.
 
@@ -113,5 +119,7 @@ async def oauth_callback(request: Request, code: str = "", state: str = ""):
         key=hub_auth.cookie_name,
         value=token,
         path=hub_auth.base_url,
+        httponly=True,
+        secure=_is_https(request),
     )
     return response
